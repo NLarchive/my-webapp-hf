@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Hugging Face Space</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome to My Web App</h1>
+            <p class="subtitle">Running on Hugging Face Spaces with Docker</p>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2>Static Content</h2>
+                <p>This is a simple HTML page styled with CSS.</p>
+                <button id="testButton">Click Me (JS Test)</button>
+                <p id="jsOutput"></p>
+            </section>
+
+            <section class="card">
+                <h2>PHP Dynamic Content</h2>
+                <div id="phpContent">
+                    <p>Loading PHP content...</p>
+                </div>
+                <button id="loadPhp">Reload PHP Data</button>
+            </section>
+
+            <section class="card">
+                <h2>Form Example</h2>
+                <form id="testForm">
+                    <input type="text" id="nameInput" placeholder="Enter your name" required>
+                    <button type="submit">Submit to PHP</button>
+                </form>
+                <div id="formResponse"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Synced from GitHub to Hugging Face Spaces</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
