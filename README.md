@@ -54,7 +54,7 @@ Visit http://localhost:7860
 
 This app is automatically deployed to Hugging Face Spaces from GitHub.
 
-Live URL: [Your Space URL will be here]
+Live URL: https://huggingface.co/spaces/NLarchive/my-webapp-hf
 
 ## License
 
