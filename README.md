@@ -1,17 +1,16 @@
 ---
 title: My Web App on Hugging Face Spaces
-emoji: "🚀"
-colorFrom: "#667eea"
-colorTo: "#764ba2"
+emoji: 🚀
+colorFrom: indigo
+colorTo: yellow
 sdk: docker
-sdk_version: "latest"
-app_file: Dockerfile
 pinned: false
+short_description: Full-stack web app with HTML, CSS, JS, and PHP
 ---
 
 # My Web App on Hugging Face Spaces
 
-A simple web application with HTML, CSS, JavaScript, and PHP running on Hugging Face Spaces via Docker.
+A full-stack web application with HTML, CSS, JavaScript, and PHP 8.2 running on Apache via Docker, auto-synced from GitHub.
 
 ## Features
 
