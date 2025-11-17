@@ -3,47 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Hugging Face Space</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>AI Agent - HF Space</title>
+    <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Welcome to My Web App</h1>
-            <p class="subtitle">Running on Hugging Face Spaces with Docker</p>
-        </header>
-
-        <main>
-            <section class="card">
-                <h2>Static Content</h2>
-                <p>This is a simple HTML page styled with CSS.</p>
-                <button id="testButton">Click Me (JS Test)</button>
-                <p id="jsOutput"></p>
-            </section>
-
-            <section class="card">
-                <h2>PHP Dynamic Content</h2>
-                <div id="phpContent">
-                    <p>Loading PHP content...</p>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>🤖 AI Agent</h1>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="chat">
+                    💬 Chat
+                </button>
+                <button class="nav-item" data-tab="scanner">
+                    🔍 Scanner
+                </button>
+                <button class="nav-item" data-tab="project">
+                    📁 Project
+                </button>
+                <button class="nav-item" data-tab="settings">
+                    ⚙️ Settings
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="status">
+                    <div class="status-dot online"></div>
+                    <span>Connected</span>
                 </div>
-                <button id="loadPhp">Reload PHP Data</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Chat Tab -->
+            <section id="chat-tab" class="tab-content active">
+                <div class="chat-container">
+                    <header class="chat-header">
+                        <h2>Chat with AI Agent</h2>
+                        <p>Ask about your project, scan for issues, or request changes</p>
+                    </header>
+                    
+                    <div id="chat-messages" class="chat-messages"></div>
+                    
+                    <div class="chat-input-area">
+                        <div class="quick-commands">
+                            <button class="command-btn" data-command="/scan">🔍 Scan</button>
+                            <button class="command-btn" data-command="/status">📊 Status</button>
+                            <button class="command-btn" data-command="/issues">📋 Issues</button>
+                            <button class="command-btn" data-command="/help">❓ Help</button>
+                        </div>
+                        
+                        <form id="chat-form">
+                            <input
+                                type="text"
+                                id="message-input"
+                                placeholder="Type your message or use commands (/scan, /status, /issues)..."
+                                autocomplete="off"
+                            >
+                            <button type="submit" class="send-btn">Send</button>
+                        </form>
+                    </div>
+                </div>
             </section>
 
-            <section class="card">
-                <h2>Form Example</h2>
-                <form id="testForm">
-                    <input type="text" id="nameInput" placeholder="Enter your name" required>
-                    <button type="submit">Submit to PHP</button>
-                </form>
-                <div id="formResponse"></div>
+            <!-- Scanner Tab -->
+            <section id="scanner-tab" class="tab-content">
+                <div class="scanner-container">
+                    <header class="section-header">
+                        <h2>Project Scanner</h2>
+                        <p>Scan for issues and get AI recommendations</p>
+                    </header>
+                    
+                    <div class="scanner-controls">
+                        <button id="manual-scan-btn" class="btn btn-primary">
+                            🔍 Run Manual Scan
+                        </button>
+                        <button id="auto-scan-toggle" class="btn btn-secondary">
+                            Start Auto-Scan (1 hour)
+                        </button>
+                    </div>
+                    
+                    <div id="scanner-results" class="scanner-results">
+                        <p class="placeholder">No scan results yet. Click "Run Manual Scan" to start.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Project Tab -->
+            <section id="project-tab" class="tab-content">
+                <div class="project-container">
+                    <header class="section-header">
+                        <h2>Project Information</h2>
+                        <p>View project structure and files</p>
+                    </header>
+                    
+                    <div class="project-grid">
+                        <div class="project-card">
+                            <h3>📁 Project Structure</h3>
+                            <div id="project-structure" class="file-tree">
+                                <p class="loading">Loading project structure...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <h3>📄 README</h3>
+                            <div id="project-readme" class="readme-content">
+                                <p class="loading">Loading README...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="project-card">
+                            <h3>🐳 Dockerfile</h3>
+                            <div id="project-dockerfile" class="dockerfile-content">
+                                <p class="loading">Loading Dockerfile...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Tab -->
+            <section id="settings-tab" class="tab-content">
+                <div class="settings-container">
+                    <header class="section-header">
+                        <h2>Settings & Configuration</h2>
+                        <p>Configure AI Agent behavior</p>
+                    </header>
+                    
+                    <div class="settings-grid">
+                        <div class="setting-group">
+                            <label for="auto-fix-toggle">
+                                <input type="checkbox" id="auto-fix-toggle" />
+                                Enable Auto-Fix for detected issues
+                            </label>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label for="auto-commit-toggle">
+                                <input type="checkbox" id="auto-commit-toggle" />
+                                Auto-commit fixes to GitHub
+                            </label>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label for="scan-interval">
+                                Scan Interval (minutes):
+                                <input type="number" id="scan-interval" value="60" min="10" max="1440" />
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-info">
+                        <h4>ℹ️ Information</h4>
+                        <div id="app-info" class="info-box">
+                            <p>Loading...</p>
+                        </div>
+                    </div>
+                </div>
             </section>
         </main>
-
-        <footer>
-            <p>Synced from GitHub to Hugging Face Spaces</p>
-        </footer>
     </div>
 
-    <script src="script.js"></script>
+    <script src="/assets/js/app.js" type="module"></script>
 </body>
 </html>

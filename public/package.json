@@ -1,0 +1,27 @@
+{
+  "name": "ai-agent-hf-space",
+  "version": "1.0.0",
+  "description": "AI Agent for GitHub→HF Space with periodic scanning and chat interface",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "agent": "node src/agents/scanner.js",
+    "test": "echo 'Tests coming soon'"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.7.0",
+    "express": "^4.18.2",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
