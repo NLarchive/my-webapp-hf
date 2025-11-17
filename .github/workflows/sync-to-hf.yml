@@ -15,10 +15,20 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      - name: Push to Hugging Face Space
+      - name: Trigger HuggingFace Space Rebuild
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git remote add hf https://NLarchive:$HF_TOKEN@huggingface.co/spaces/NLarchive/my-webapp-hf
+          # Install huggingface-hub CLI
+          pip install huggingface-hub
+          
+          # Login to HuggingFace
+          huggingface-cli login --token $HF_TOKEN
+          
+          # Push repo to HF Space using HF CLI
+          git push https://NLarchive:$HF_TOKEN@huggingface.co/spaces/NLarchive/my-webapp-hf main --force || true
+          
+          # Alternative: Trigger rebuild via API
+          curl -X POST \
+            -H "Authorization: Bearer $HF_TOKEN" \
+            https://huggingface.co/api/spaces/NLarchive/my-webapp-hf/restart
