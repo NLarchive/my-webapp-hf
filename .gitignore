@@ -21,3 +21,13 @@ Thumbs.db
 
 # Docker
 .dockerignore
+
+#docs
+sync-hf-space-github.md
+sync-hf-space-github-script-design.md
+#autolaunch
+scripts/
+
+#versions
+public_v1/
+public_v2/

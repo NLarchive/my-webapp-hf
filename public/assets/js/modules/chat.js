@@ -9,7 +9,6 @@ import { UIManager } from './ui.js';
 export class ChatManager {
   constructor() {
     this.api = new ApiClient();
-    this.ui = new UIManager();
     this.sessionId = null;
     this.messageHistory = [];
   }

@@ -9,7 +9,6 @@ import { UIManager } from './ui.js';
 export class ScannerManager {
   constructor() {
     this.api = new ApiClient();
-    this.ui = new UIManager();
     this.isAutoScanning = false;
   }
 
@@ -23,7 +22,7 @@ export class ScannerManager {
       this.displayScanResults(response.report);
     } catch (error) {
       console.error('Scan failed:', error);
-      this.ui.showError(`Scan failed: ${error.message}`);
+      UIManager.showError(`Scan failed: ${error.message}`);
     } finally {
       btn.disabled = false;
       btn.textContent = '🔍 Run Manual Scan';
@@ -39,17 +38,17 @@ export class ScannerManager {
         this.isAutoScanning = false;
         btn.classList.remove('active');
         btn.textContent = 'Start Auto-Scan (1 hour)';
-        this.ui.showSuccess('Auto-scan stopped');
+        UIManager.showSuccess('Auto-scan stopped');
       } else {
         await this.api.post('/scanner/start-continuous', {});
         this.isAutoScanning = true;
         btn.classList.add('active');
         btn.textContent = 'Stop Auto-Scan';
-        this.ui.showSuccess('Auto-scan started (1 hour interval)');
+        UIManager.showSuccess('Auto-scan started (1 hour interval)');
       }
     } catch (error) {
       console.error('Failed to toggle auto-scan:', error);
-      this.ui.showError(`Failed to toggle auto-scan: ${error.message}`);
+      UIManager.showError(`Failed to toggle auto-scan: ${error.message}`);
     }
   }
 
@@ -76,9 +75,9 @@ export class ScannerManager {
         const severityClass = `severity-${issue.severity}`;
         html += `
           <li class="issue-item ${severityClass}">
-            <span class="severity-badge">${issue.severity}</span>
-            <span class="issue-message">${issue.message}</span>
-            <span class="issue-file"><code>${issue.file}</code></span>
+            <span class="severity-badge">${this.escapeHtml(issue.severity)}</span>
+            <span class="issue-message">${this.escapeHtml(issue.message)}</span>
+            <span class="issue-file"><code>${this.escapeHtml(issue.file)}</code></span>
           </li>
         `;
       });
@@ -97,8 +96,8 @@ export class ScannerManager {
       report.recommendations.forEach((rec) => {
         html += `
           <li class="recommendation-item">
-            <span class="priority-badge">${rec.priority}</span>
-            <div class="recommendation-text">${rec.suggestion}</div>
+            <span class="priority-badge">${this.escapeHtml(rec.priority)}</span>
+            <div class="recommendation-text">${this.escapeHtml(rec.suggestion)}</div>
           </li>
         `;
       });
@@ -107,5 +106,11 @@ export class ScannerManager {
 
     html += '</div>';
     resultsContainer.innerHTML = html;
+  }
+
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 }

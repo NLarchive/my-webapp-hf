@@ -17,7 +17,7 @@ export class UIManager {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.innerHTML = `
-      <span>${message}</span>
+      <span>${this.escapeHtml(message)}</span>
       <button class="close-btn">&times;</button>
     `;
 
@@ -41,10 +41,16 @@ export class UIManager {
     if (infoBox) {
       let html = '<dl>';
       for (const [key, value] of Object.entries(info)) {
-        html += `<dt>${key}</dt><dd>${value}</dd>`;
+        html += `<dt>${this.escapeHtml(key)}</dt><dd>${this.escapeHtml(value)}</dd>`;
       }
       html += '</dl>';
       infoBox.innerHTML = html;
     }
+  }
+
+  static escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 }

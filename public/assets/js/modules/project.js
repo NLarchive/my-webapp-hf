@@ -58,7 +58,7 @@ export class ProjectManager {
         html += `
           <li class="file-item">
             <span class="file-icon">📄</span>
-            <span class="file-name">${file.name}</span>
+            <span class="file-name">${this.escapeHtml(file.name)}</span>
             <span class="file-size">${this.formatBytes(file.size)}</span>
           </li>
         `;
@@ -71,7 +71,7 @@ export class ProjectManager {
         html += `
           <li class="dir-item">
             <span class="dir-icon">📁</span>
-            <span class="dir-name">${dir.name}</span>
+            <span class="dir-name">${this.escapeHtml(dir.name)}</span>
           </li>
         `;
       });

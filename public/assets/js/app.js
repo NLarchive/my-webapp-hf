@@ -56,18 +56,23 @@ class AIAgentApp {
       await this.chatManager.initialize();
 
       // Load project info
-      await this.projectManager.loadProjectStructure();
-      await this.projectManager.loadReadme();
-      await this.projectManager.loadDockerfile();
+      try {
+        await this.projectManager.loadProjectStructure();
+        await this.projectManager.loadReadme();
+        await this.projectManager.loadDockerfile();
+      } catch (e) {
+        console.warn('Failed to load project info:', e);
+        UIManager.showError('Could not load project information');
+      }
 
       // Load app info
-      this.uiManager.updateAppInfo({
+      UIManager.updateAppInfo({
         status: 'Ready',
         timestamp: new Date().toLocaleString(),
       });
     } catch (error) {
       console.error('Failed to load initial data:', error);
-      this.uiManager.showError('Failed to initialize application');
+      UIManager.showError('Failed to initialize application: ' + error.message);
     }
   }
 

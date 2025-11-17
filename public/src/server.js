@@ -37,13 +37,13 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API Routes
+// API Routes (MUST be before static files!)
 app.use('/api/chat', chatRoutes);
 app.use('/api/scanner', scannerRoutes);
 app.use('/api/project', projectRoutes);
 
-// Serve static files
-app.use(express.static('public'));
+// Serve static files (HTML, CSS, JS)
+app.use(express.static('.'));
 
 // 404 handler
 app.use((req, res) => {
