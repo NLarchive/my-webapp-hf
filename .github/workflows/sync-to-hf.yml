@@ -15,10 +15,15 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      - name: Check large files
-        uses: ActionsDesk/lfs-warning@v2.0
-        with:
-          filesizelimit: 10485760 # 10MB
+      - name: Check for large files (>10MB)
+        run: |
+          echo "Checking for files > 10MB in repository..."
+          git ls-tree -r -l --full-tree HEAD | awk '$4 >= 10485760 {print $0}' > /tmp/largefiles || true
+          if [ -s /tmp/largefiles ]; then
+            echo "ERROR: Found files larger than 10MB. List:"
+            cat /tmp/largefiles
+            exit 1
+          fi
 
       - name: Configure git
         run: |
