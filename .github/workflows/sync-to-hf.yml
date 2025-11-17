@@ -1,12 +1,12 @@
-name: Sync to Hugging Face Space
+name: Sync to Hugging Face hub
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  sync:
+  sync-to-hub:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -15,20 +15,22 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      - name: Trigger HuggingFace Space Rebuild
+      - name: Check large files
+        uses: ActionsDesk/lfs-warning@v2.0
+        with:
+          filesizelimit: 10485760 # 10MB
+
+      - name: Configure git
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+
+      - name: Push to Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # Install huggingface-hub CLI
-          pip install huggingface-hub
-          
-          # Login to HuggingFace
-          huggingface-cli login --token $HF_TOKEN
-          
-          # Push repo to HF Space using HF CLI
-          git push https://NLarchive:$HF_TOKEN@huggingface.co/spaces/NLarchive/my-webapp-hf main --force || true
-          
-          # Alternative: Trigger rebuild via API
-          curl -X POST \
-            -H "Authorization: Bearer $HF_TOKEN" \
-            https://huggingface.co/api/spaces/NLarchive/my-webapp-hf/restart
+          # Add space remote (ignore if exists)
+          git remote add space https://NLarchive:$HF_TOKEN@huggingface.co/spaces/NLarchive/my-webapp-hf || true
+
+          # Force push to the space
+          git push --force https://NLarchive:$HF_TOKEN@huggingface.co/spaces/NLarchive/my-webapp-hf main
