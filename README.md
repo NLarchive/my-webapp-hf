@@ -1,3 +1,14 @@
+---
+title: My Web App on Hugging Face Spaces
+emoji: "🚀"
+colorFrom: "#667eea"
+colorTo: "#764ba2"
+sdk: docker
+sdk_version: "latest"
+app_file: Dockerfile
+pinned: false
+---
+
 # My Web App on Hugging Face Spaces
 
 A simple web application with HTML, CSS, JavaScript, and PHP running on Hugging Face Spaces via Docker.
