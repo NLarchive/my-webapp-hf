@@ -188,14 +188,14 @@ For each suggestion provide:
       const issueBody = this.formatScanReportAsIssue(report);
 
       const issue = await githubService.createIssue({
-        title: `🤖 AI Scanner: Issues Detected`,
+        title: `🤖 AI Scanner: Issues Detected (${new Date().toLocaleDateString()})`,
         body: issueBody,
-        labels: ['ai-detected', 'needs-review'],
+        labels: ['ai-detected', 'needs-review', 'auto-generated'],
       });
 
-      logger.info('Created issue from scan', { issueNumber: issue.number });
+      logger.info('Created issue from scan', { issueNumber: issue.number, repo: config.GITHUB_REPO });
     } catch (error) {
-      logger.error('Failed to create issue', { error: error.message });
+      logger.error('Failed to create issue', { error: error.message, repo: config.GITHUB_REPO });
     }
   }
 
@@ -206,24 +206,39 @@ For each suggestion provide:
    */
   formatScanReportAsIssue(report) {
     let body = '## 🤖 AI Scanner Report\n\n';
+    body += `**Repository:** ${config.GITHUB_REPO}\n`;
+    body += `**Branch:** ${config.GITHUB_BRANCH}\n\n`;
 
     if (report.issues.length > 0) {
-      body += '### Issues Found\n';
+      body += '### 🚨 Issues Found\n';
       report.issues.forEach((issue) => {
         body += `- **[${issue.severity}]** ${issue.message}\n`;
         body += `  - File: \`${issue.file}\`\n`;
         body += `  - Type: ${issue.type}\n\n`;
       });
+    } else {
+      body += '### ✅ No Critical Issues Found\n\n';
     }
 
-    if (report.recommendations.length > 0) {
-      body += '### Recommendations\n';
+    if (report.recommendations && report.recommendations.length > 0) {
+      body += '### 💡 Recommendations\n';
       report.recommendations.forEach((rec) => {
-        body += `- **[${rec.priority}]** ${rec.suggestion}\n`;
+        body += `- **[${rec.priority}]** ${rec.suggestion}\n\n`;
       });
     }
 
-    body += `\n---\n_Scanned at: ${report.timestamp}_\n_Scan duration: ${report.duration}ms_`;
+    if (report.analysis && report.analysis.files.length > 0) {
+      body += '### 📊 Code Analysis\n';
+      report.analysis.files.forEach((f) => {
+        body += `- **${f.name}**: Analyzed successfully\n`;
+      });
+      body += '\n';
+    }
+
+    body += `---\n`;
+    body += `_Scanned at: ${report.timestamp}_\n`;
+    body += `_Scan duration: ${report.duration}ms_\n`;
+    body += `_By: AI Scanner Agent_`;
 
     return body;
   }

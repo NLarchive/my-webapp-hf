@@ -10,8 +10,13 @@ export const config = {
   
   // API Keys
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
-  GITHUB_TOKEN: process.env.GITHUB_TOKEN || '',
+  GITHUB_TOKEN: process.env.GITHUB_TOKEN || '', // Fallback for backward compatibility
   HF_TOKEN: process.env.HF_TOKEN || '',
+  
+  // GitHub App Authentication
+  GH_APP_ID: process.env.GH_APP_ID || '',
+  GH_APP_PRIVATE_KEY_B64: process.env.GH_APP_PRIVATE_KEY_B64 || '',
+  GH_APP_INSTALLATION_ID: process.env.GH_APP_INSTALLATION_ID || '',
   
   // GitHub
   GITHUB_REPO: process.env.GITHUB_REPO || 'NLarchive/my-webapp-hf',
@@ -33,8 +38,16 @@ export const config = {
 };
 
 export function validateConfig() {
-  const required = ['GEMINI_API_KEY', 'GITHUB_TOKEN'];
+  const required = ['GEMINI_API_KEY'];
+  const githubAuth = ['GITHUB_TOKEN', 'GH_APP_ID', 'GH_APP_PRIVATE_KEY_B64', 'GH_APP_INSTALLATION_ID'];
+  
   const missing = required.filter(key => !config[key]);
+  
+  // Check if at least one GitHub auth method is configured
+  const hasGitHubAuth = githubAuth.some(key => config[key]);
+  if (!hasGitHubAuth) {
+    missing.push('GitHub authentication (GITHUB_TOKEN or GH_APP_* variables)');
+  }
   
   if (missing.length > 0) {
     console.error(`Missing required environment variables: ${missing.join(', ')}`);

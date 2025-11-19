@@ -3,19 +3,51 @@
  * Handles GitHub API interactions (PR creation, issue creation, commits, etc.)
  */
 
-import axios from 'axios';
+import { Octokit } from '@octokit/rest';
+import { createAppAuth } from '@octokit/auth-app';
 import { config } from '../config/env.js';
 import { logger } from '../config/logger.js';
 
 class GitHubService {
   constructor() {
-    this.api = axios.create({
-      baseURL: 'https://api.github.com',
-      headers: {
-        Authorization: `token ${config.GITHUB_TOKEN}`,
-        Accept: 'application/vnd.github.v3+json',
-      },
-    });
+    this.octokit = null;
+    this.initializeOctokit();
+  }
+
+  async initializeOctokit() {
+    try {
+      // Try GitHub App authentication first
+      if (config.GH_APP_ID && config.GH_APP_PRIVATE_KEY_B64 && config.GH_APP_INSTALLATION_ID) {
+        const privateKey = Buffer.from(config.GH_APP_PRIVATE_KEY_B64, 'base64').toString('utf8');
+
+        const auth = createAppAuth({
+          appId: config.GH_APP_ID,
+          privateKey,
+          installationId: config.GH_APP_INSTALLATION_ID,
+        });
+
+        this.octokit = new Octokit({
+          authStrategy: auth,
+          auth: { type: 'installation' },
+        });
+
+        logger.info('GitHub App authentication initialized');
+      }
+      // Fallback to personal access token
+      else if (config.GITHUB_TOKEN) {
+        this.octokit = new Octokit({
+          auth: config.GITHUB_TOKEN,
+        });
+
+        logger.info('GitHub token authentication initialized');
+      }
+      else {
+        throw new Error('No GitHub authentication method configured');
+      }
+    } catch (error) {
+      logger.error('Failed to initialize GitHub client', { error: error.message });
+      throw error;
+    }
   }
 
   /**
@@ -26,11 +58,15 @@ class GitHubService {
   async createIssue(issue) {
     try {
       const { title, body, labels = [], assignees = [] } = issue;
-      
-      const response = await this.api.post(
-        `/repos/${config.GITHUB_REPO}/issues`,
-        { title, body, labels, assignees }
-      );
+
+      const response = await this.octokit.issues.create({
+        owner: config.GITHUB_OWNER,
+        repo: config.GITHUB_REPO.split('/')[1],
+        title,
+        body,
+        labels,
+        assignees,
+      });
 
       logger.info('GitHub issue created', { issueNumber: response.data.number });
       return response.data;
@@ -55,10 +91,15 @@ class GitHubService {
         draft = false,
       } = pr;
 
-      const response = await this.api.post(
-        `/repos/${config.GITHUB_REPO}/pulls`,
-        { title, body, head, base, draft }
-      );
+      const response = await this.octokit.pulls.create({
+        owner: config.GITHUB_OWNER,
+        repo: config.GITHUB_REPO.split('/')[1],
+        title,
+        body,
+        head,
+        base,
+        draft,
+      });
 
       logger.info('GitHub PR created', { prNumber: response.data.number });
       return response.data;
@@ -75,9 +116,11 @@ class GitHubService {
    */
   async getFileContents(path = '') {
     try {
-      const response = await this.api.get(
-        `/repos/${config.GITHUB_REPO}/contents/${path}`
-      );
+      const response = await this.octokit.repos.getContent({
+        owner: config.GITHUB_OWNER,
+        repo: config.GITHUB_REPO.split('/')[1],
+        path,
+      });
 
       return response.data;
     } catch (error) {
@@ -113,13 +156,13 @@ class GitHubService {
    */
   async triggerWorkflow(workflowId, inputs = {}) {
     try {
-      const response = await this.api.post(
-        `/repos/${config.GITHUB_REPO}/actions/workflows/${workflowId}/dispatches`,
-        {
-          ref: config.GITHUB_BRANCH,
-          inputs,
-        }
-      );
+      const response = await this.octokit.actions.createWorkflowDispatch({
+        owner: config.GITHUB_OWNER,
+        repo: config.GITHUB_REPO.split('/')[1],
+        workflow_id: workflowId,
+        ref: config.GITHUB_BRANCH,
+        inputs,
+      });
 
       logger.info('Workflow triggered', { workflowId });
       return response.data;
@@ -135,7 +178,10 @@ class GitHubService {
    */
   async getRepoInfo() {
     try {
-      const response = await this.api.get(`/repos/${config.GITHUB_REPO}`);
+      const response = await this.octokit.repos.get({
+        owner: config.GITHUB_OWNER,
+        repo: config.GITHUB_REPO.split('/')[1],
+      });
       return response.data;
     } catch (error) {
       logger.error('Failed to get repo info', { error: error.message });
@@ -150,10 +196,11 @@ class GitHubService {
    */
   async listIssues(state = 'open') {
     try {
-      const response = await this.api.get(
-        `/repos/${config.GITHUB_REPO}/issues`,
-        { params: { state } }
-      );
+      const response = await this.octokit.issues.listForRepo({
+        owner: config.GITHUB_OWNER,
+        repo: config.GITHUB_REPO.split('/')[1],
+        state,
+      });
       return response.data;
     } catch (error) {
       logger.error('Failed to list issues', { error: error.message });
@@ -169,10 +216,12 @@ class GitHubService {
    */
   async addIssueComment(issueNumber, body) {
     try {
-      const response = await this.api.post(
-        `/repos/${config.GITHUB_REPO}/issues/${issueNumber}/comments`,
-        { body }
-      );
+      const response = await this.octokit.issues.createComment({
+        owner: config.GITHUB_OWNER,
+        repo: config.GITHUB_REPO.split('/')[1],
+        issue_number: issueNumber,
+        body,
+      });
 
       logger.info('Issue comment added', { issueNumber });
       return response.data;

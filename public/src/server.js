@@ -14,6 +14,7 @@ import { scannerAgent } from './agents/scanner.js';
 import chatRoutes from './api/chat.js';
 import scannerRoutes from './api/scanner.js';
 import projectRoutes from './api/project.js';
+import docsRoutes from './api/docs.js';
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.get('/health', (req, res) => {
 app.use('/api/chat', chatRoutes);
 app.use('/api/scanner', scannerRoutes);
 app.use('/api/project', projectRoutes);
+app.use('/api/docs', docsRoutes);
 
 // Serve static files (HTML, CSS, JS)
 app.use(express.static('.'));
@@ -66,16 +68,25 @@ async function startServer() {
     validateConfig();
 
     // Start server
-    app.listen(config.PORT, () => {
+    const server = app.listen(config.PORT, () => {
       logger.info(`Server started on port ${config.PORT}`);
+      logger.info(`Environment: ${config.NODE_ENV}`);
+      logger.info(`Health check: http://localhost:${config.PORT}/health`);
     });
 
     // Start scanner if enabled
     if (config.ENABLE_AUTO_FIX) {
+      logger.info('Starting periodic scanner...');
       scannerAgent.startPeriodicScanning();
     } else {
-      logger.info('Auto-fix is disabled');
+      logger.info('Auto-fix is disabled (ENABLE_AUTO_FIX=false)');
     }
+
+    // Handle server errors
+    server.on('error', (err) => {
+      logger.error('Server error', { error: err.message });
+      process.exit(1);
+    });
   } catch (error) {
     logger.error('Failed to start server', { error: error.message });
     process.exit(1);

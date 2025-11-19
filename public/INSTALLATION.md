@@ -78,7 +78,9 @@ Visit: http://localhost:3000
 4. Paste into .env GEMINI_API_KEY=
 ```
 
-#### 2. GitHub Personal Access Token
+#### 2. GitHub Authentication (Choose One)
+
+**Option A: Personal Access Token (Simple)**
 ```
 1. Go: https://github.com/settings/tokens
 2. Click "Generate new token" → "Generate new token (classic)"
@@ -89,6 +91,41 @@ Visit: http://localhost:3000
    ✓ gist (optional)
 5. Generate and copy
 6. Paste into .env GITHUB_TOKEN=
+```
+
+**Option B: GitHub App (Recommended for Production)**
+```
+1. Go: https://github.com/settings/apps
+2. Click "New GitHub App"
+3. Configure:
+   - Name: "AI Agent HF"
+   - Homepage URL: https://huggingface.co/spaces/YourUsername/your-space
+   - Webhook URL: Leave empty
+   - Permissions:
+     ✓ Repository permissions → Contents: Read & write
+     ✓ Repository permissions → Issues: Read & write
+     ✓ Repository permissions → Pull requests: Read & write
+     ✓ Repository permissions → Actions: Read & write
+     ✓ Repository permissions → Metadata: Read
+4. Generate private key (download .pem file)
+5. Install app on your repository
+6. Get installation ID from app settings
+7. Convert private key to base64:
+   ```bash
+   # On Windows PowerShell
+   [Convert]::ToBase64String([IO.File]::ReadAllBytes("path\to\private-key.pem"))
+   ```
+8. Configure .env:
+   ```
+   GH_APP_ID=your_app_id
+   GH_APP_PRIVATE_KEY_B64=your_base64_private_key
+   GH_APP_INSTALLATION_ID=your_installation_id
+   ```
+9. Test authentication:
+   ```bash
+   cd scripts
+   node test-github-auth.js
+   ```
 ```
 
 #### 3. Hugging Face Token
