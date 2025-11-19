@@ -33,6 +33,34 @@ router.post('/scan', async (req, res) => {
 });
 
 /**
+ * POST /api/scanner/modify
+ * Trigger auto-modifications
+ */
+router.post('/modify', async (req, res) => {
+  try {
+    logger.info('Auto-modifications triggered manually');
+
+    // First perform a scan
+    const report = await scannerAgent.performScan();
+
+    // Then perform modifications
+    await scannerAgent.performAutoModifications(report);
+
+    res.json({
+      success: true,
+      message: 'Auto-modifications completed',
+      report,
+    });
+  } catch (error) {
+    logger.error('Auto-modifications failed', { error: error.message });
+    res.status(500).json({
+      error: 'Auto-modifications failed',
+      details: error.message,
+    });
+  }
+});
+
+/**
  * GET /api/scanner/last-report
  * Get last scan report
  */

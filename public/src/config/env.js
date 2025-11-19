@@ -30,6 +30,7 @@ export const config = {
   // Scanner Configuration
   SCAN_INTERVAL: parseInt(process.env.SCAN_INTERVAL || '3600000', 10), // 1 hour in ms
   ENABLE_AUTO_FIX: process.env.ENABLE_AUTO_FIX === 'true',
+  ENABLE_AUTO_MODIFY: process.env.ENABLE_AUTO_MODIFY === 'true', // New: auto-modify files
   AUTO_COMMIT: process.env.AUTO_COMMIT === 'true',
   
   // Logging
