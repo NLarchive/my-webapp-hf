@@ -11,10 +11,12 @@ import { logger } from '../config/logger.js';
 class GitHubService {
   constructor() {
     this.octokit = null;
-    this.initializeOctokit();
+    this.initialized = false;
   }
 
-  async initializeOctokit() {
+  async ensureInitialized() {
+    if (this.initialized) return;
+    
     try {
       // Try GitHub App authentication first
       if (config.GH_APP_ID && config.GH_APP_PRIVATE_KEY_B64 && config.GH_APP_INSTALLATION_ID) {
@@ -42,8 +44,12 @@ class GitHubService {
         logger.info('GitHub token authentication initialized');
       }
       else {
-        throw new Error('No GitHub authentication method configured');
+        logger.warn('No GitHub authentication configured - read-only mode');
+        // Use unauthenticated client (rate limited)
+        this.octokit = new Octokit();
       }
+      
+      this.initialized = true;
     } catch (error) {
       logger.error('Failed to initialize GitHub client', { error: error.message });
       throw error;
@@ -57,6 +63,7 @@ class GitHubService {
    */
   async createIssue(issue) {
     try {
+      await this.ensureInitialized();
       const { title, body, labels = [], assignees = [] } = issue;
 
       const response = await this.octokit.issues.create({
@@ -83,6 +90,7 @@ class GitHubService {
    */
   async createPullRequest(pr) {
     try {
+      await this.ensureInitialized();
       const {
         title,
         body,
@@ -116,6 +124,7 @@ class GitHubService {
    */
   async getFileContents(path = '') {
     try {
+      await this.ensureInitialized();
       const response = await this.octokit.repos.getContent({
         owner: config.GITHUB_OWNER,
         repo: config.GITHUB_REPO.split('/')[1],
@@ -156,6 +165,7 @@ class GitHubService {
    */
   async triggerWorkflow(workflowId, inputs = {}) {
     try {
+      await this.ensureInitialized();
       const response = await this.octokit.actions.createWorkflowDispatch({
         owner: config.GITHUB_OWNER,
         repo: config.GITHUB_REPO.split('/')[1],
@@ -178,6 +188,7 @@ class GitHubService {
    */
   async getRepoInfo() {
     try {
+      await this.ensureInitialized();
       const response = await this.octokit.repos.get({
         owner: config.GITHUB_OWNER,
         repo: config.GITHUB_REPO.split('/')[1],
@@ -196,6 +207,7 @@ class GitHubService {
    */
   async listIssues(state = 'open') {
     try {
+      await this.ensureInitialized();
       const response = await this.octokit.issues.listForRepo({
         owner: config.GITHUB_OWNER,
         repo: config.GITHUB_REPO.split('/')[1],
@@ -216,6 +228,7 @@ class GitHubService {
    */
   async addIssueComment(issueNumber, body) {
     try {
+      await this.ensureInitialized();
       const response = await this.octokit.issues.createComment({
         owner: config.GITHUB_OWNER,
         repo: config.GITHUB_REPO.split('/')[1],
