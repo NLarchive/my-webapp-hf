@@ -9,8 +9,16 @@ import { logger } from '../config/logger.js';
 
 class GeminiService {
   constructor() {
-    this.client = new GoogleGenerativeAI(config.GEMINI_API_KEY);
-    this.model = this.client.getGenerativeModel({ model: 'gemini-pro' });
+    this.enabled = !!config.GEMINI_API_KEY;
+    if (this.enabled) {
+      this.client = new GoogleGenerativeAI(config.GEMINI_API_KEY);
+      this.model = this.client.getGenerativeModel({ model: 'gemini-pro' });
+      logger.info('Gemini client initialized');
+    } else {
+      this.client = null;
+      this.model = null;
+      logger.warn('Gemini API key not configured; running in fallback/mock mode');
+    }
     this.conversationHistory = [];
   }
 
@@ -22,6 +30,10 @@ class GeminiService {
    */
   async generate(prompt, options = {}) {
     try {
+      if (!this.enabled) {
+        logger.debug('Gemini disabled; returning mock content');
+        return `Mock response for prompt: ${prompt.substring(0, 120)}...`;
+      }
       const context = options.context || '';
       const fullPrompt = context ? `${context}\n\n${prompt}` : prompt;
 
@@ -44,6 +56,12 @@ class GeminiService {
    */
   async chat(userMessage) {
     try {
+      if (!this.enabled) {
+        // Keep a very simple mock chat reply
+        const reply = `Mock chat reply: Received message '${userMessage}'`;
+        this.conversationHistory.push({ role: 'assistant', content: reply });
+        return reply;
+      }
       this.conversationHistory.push({
         role: 'user',
         content: userMessage,
