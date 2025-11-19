@@ -45,7 +45,8 @@ class GeminiService {
       return text;
     } catch (error) {
       logger.error('Gemini generation failed', { error: error.message });
-      throw error;
+      // Return fallback/mock content to avoid bubbling errors to clients
+      return `Gemini unavailable: ${error.message}`;
     }
   }
 
@@ -83,7 +84,10 @@ class GeminiService {
       return text;
     } catch (error) {
       logger.error('Chat failed', { error: error.message });
-      throw error;
+      // Fallback reply
+      const fallback = `Gemini chat unavailable: ${error.message}`;
+      this.conversationHistory.push({ role: 'assistant', content: fallback });
+      return fallback;
     }
   }
 
