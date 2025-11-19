@@ -11,9 +11,17 @@ class GeminiService {
   constructor() {
     this.enabled = !!config.GEMINI_API_KEY;
     if (this.enabled) {
-      this.client = new GoogleGenerativeAI(config.GEMINI_API_KEY);
-      this.model = this.client.getGenerativeModel({ model: 'gemini-pro' });
-      logger.info('Gemini client initialized');
+      try {
+        this.client = new GoogleGenerativeAI(config.GEMINI_API_KEY);
+        this.model = this.client.getGenerativeModel({ model: 'gemini-pro' });
+        logger.info('Gemini client initialized');
+      } catch (error) {
+        logger.error('Failed to initialize Gemini client', { error: error.message });
+        this.enabled = false;
+        this.client = null;
+        this.model = null;
+        logger.warn('Gemini disabled due to initialization error - using fallback/null responses');
+      }
     } else {
       this.client = null;
       this.model = null;
