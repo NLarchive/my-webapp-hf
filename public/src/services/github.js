@@ -134,6 +134,22 @@ class GitHubService {
       return response.data;
     } catch (error) {
       logger.error('Failed to get file contents', { error: error.message, path });
+      // If the error indicates bad credentials, retry with unauthenticated client
+      if (error.status === 401 || /Bad credentials/i.test(error.message)) {
+        logger.warn('GitHub auth failed, retrying unauthenticated (read-only)');
+        this.octokit = new Octokit();
+        try {
+          const response = await this.octokit.repos.getContent({
+            owner: config.GITHUB_OWNER,
+            repo: config.GITHUB_REPO.split('/')[1],
+            path,
+          });
+          return response.data;
+        } catch (e) {
+          logger.error('Retry without auth failed', { error: e.message, path });
+          throw e;
+        }
+      }
       throw error;
     }
   }
