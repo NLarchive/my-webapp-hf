@@ -5,7 +5,7 @@ colorFrom: blue
 colorTo: purple
 sdk: docker
 pinned: true
-short_description: AI-powered project scanning, documentation, and chat interface
+short_description: AI-powered project scanner with docs and chat
 ---
 
 # AI Agent for Hugging Face Spaces
