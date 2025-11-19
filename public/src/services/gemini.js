@@ -13,7 +13,7 @@ class GeminiService {
     if (this.enabled) {
       try {
         this.client = new GoogleGenerativeAI(config.GEMINI_API_KEY);
-        this.model = this.client.getGenerativeModel({ model: 'gemini-pro' });
+        this.model = this.client.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
         logger.info('Gemini client initialized');
       } catch (error) {
         logger.error('Failed to initialize Gemini client', { error: error.message });

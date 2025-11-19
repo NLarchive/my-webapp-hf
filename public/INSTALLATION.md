@@ -321,7 +321,7 @@ Error: API key not valid
 Solution:
 1. Verify key in `.env` file
 2. Check key hasn't expired
-3. Test key directly: `curl https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=YOUR_KEY`
+3. Test key directly: `curl https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash-lite:generateContent?key=YOUR_KEY`
 
 ### GitHub Connection Failed
 ```
