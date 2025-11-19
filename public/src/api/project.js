@@ -68,12 +68,6 @@ router.get('/readme', async (req, res) => {
   try {
     const content = await projectService.getReadme();
 
-    if (!content) {
-      return res.status(404).json({
-        error: 'README not found',
-      });
-    }
-
     res.json({
       success: true,
       content,
@@ -93,12 +87,6 @@ router.get('/readme', async (req, res) => {
 router.get('/dockerfile', async (req, res) => {
   try {
     const content = await projectService.getDockerfile();
-
-    if (!content) {
-      return res.status(404).json({
-        error: 'Dockerfile not found',
-      });
-    }
 
     res.json({
       success: true,
