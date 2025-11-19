@@ -38,6 +38,78 @@ An intelligent AI agent that scans GitHub projects, generates documentation, det
 - Read/write repository access
 - Automatic workflow integration
 
+## 🎮 User Interface Features
+
+The AI Agent provides a comprehensive web interface with four main sections:
+
+### 💬 **Chat Tab**
+**Primary AI interaction interface**
+- **Real-time Chat**: Conversational AI powered by Google Gemini
+- **Quick Commands**: Pre-built buttons for common actions:
+  - `🔍 Scan` - Trigger project scan
+  - `📊 Status` - Get project health overview
+  - `📋 Issues` - List GitHub issues
+  - `❓ Help` - Show available commands
+- **Slash Commands**: Type commands directly:
+  - `/scan` - Scan project for issues and improvements
+  - `/status` - Get detailed project status report
+  - `/issues` - List and analyze GitHub issues
+  - `/help` - Display all available commands
+- **Context Awareness**: AI understands your project structure and codebase
+
+### 🔍 **Scanner Tab**
+**Automated project analysis and improvement**
+- **Manual Scan**: `🔍 Run Manual Scan` - Execute immediate project analysis
+- **Auto-Scan Toggle**: `Start Auto-Scan (1 hour)` - Enable continuous monitoring
+- **Issue Detection**: Identifies missing files, security issues, code quality problems
+- **Auto-Modifications**: Automatically improves projects by:
+  - Adding missing README.md files
+  - Creating .gitignore files
+  - Enhancing package.json with useful scripts
+  - Adding documentation to source files
+  - Generating architecture documentation
+- **Real-time Results**: Live display of scan findings and recommendations
+
+### 📁 **Project Tab**
+**Project information and file browser**
+- **Project Structure**: Visual file tree showing complete project layout
+- **README Viewer**: Display and preview README.md content
+- **Dockerfile Viewer**: Show container configuration
+- **File Navigation**: Browse through project files and folders
+- **Content Preview**: View file contents directly in the interface
+
+### ⚙️ **Settings Tab**
+**Configuration and system information**
+- **Auto-Fix Toggle**: Enable/disable automatic issue resolution
+- **Auto-Commit Toggle**: Control automatic GitHub commits
+- **Scan Interval**: Configure scan frequency (10-1440 minutes)
+- **System Information**: View app version, configuration, and status
+- **Configuration Management**: Adjust AI Agent behavior and preferences
+
+## 🤖 Auto-Modification Features
+
+The AI Agent can automatically improve your project by detecting and fixing common issues:
+
+### 📝 **Automatic Documentation**
+- **README Generation**: Creates comprehensive README.md files with project description, features, installation, and usage
+- **File Documentation**: Adds JSDoc comments and documentation to source files
+- **Architecture Docs**: Generates ARCHITECTURE.md explaining system design and components
+
+### 🛠️ **Project Enhancement**
+- **Missing Files**: Adds essential files like .gitignore, LICENSE, CONTRIBUTING.md
+- **Package.json Scripts**: Enhances npm scripts with testing, building, and deployment commands
+- **Code Quality**: Suggests improvements for code structure and best practices
+
+### 🔧 **Configuration Optimization**
+- **Environment Setup**: Creates .env.example with required variables
+- **Docker Optimization**: Improves Dockerfile for better performance
+- **CI/CD Enhancement**: Adds GitHub Actions workflows for automation
+
+### 📊 **Reporting & Tracking**
+- **Modification Reports**: Detailed logs of all changes made
+- **GitHub Integration**: Creates pull requests for review (when enabled)
+- **Rollback Support**: Tracks changes for easy reversion if needed
+
 ## 🛠️ Technology Stack
 
 - **Backend**: Node.js 18+ with Express.js
