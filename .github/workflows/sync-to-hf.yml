@@ -33,6 +33,7 @@ jobs:
       - name: Push to Hugging Face Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          # HF_USERNAME and HF_SPACE_NAME can be set from .hf-config or secrets
         run: |
           # Read config values from file
           HF_USERNAME=$(grep '^HF_USERNAME=' .hf-config | cut -d'=' -f2)
